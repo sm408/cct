@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+
+{% block title %}Club Page{% endblock %}
+
+{% block heading %}{% endblock %}
+
+{% block content %}
+
+<div class="hidden sm:block">
+    <div class="border-b border-gray-200">
+        <nav class="-mb-px flex gap-6" aria-label="Tabs">
+            <button data-target="members"
+                class="shrink-0 border-b-2 border-transparent px-1 pb-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 focus:outline-none focus:border-sky-500 focus:text-sky-600">
+                Members
+            </button>
+
+            <button data-target="events"
+                class="shrink-0 border-b-2 border-transparent px-1 pb-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 focus:outline-none focus:border-sky-500 focus:text-sky-600">
+                Events
+            </button>
+
+            <button data-target="add"
+                class="shrink-0 border-b-2 border-transparent px-1 pb-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 focus:outline-none focus:border-sky-500 focus:text-sky-600">
+                Add Member/Event
+            </button>
+        </nav>
+    </div>
+</div>
+
+<div id="members" class="tab-content">
+    <div class="overflow-x-auto rounded-lg border border-gray-200 px-72">
+        <table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+            <thead class="text-center">
+                <tr>
+                    <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                        Member Name
+                    </th>
+                    <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                        Member ID
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y divide-gray-200 text-center">
+                {% for member in club_members %}
+                <tr>
+                    <td class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                        {{ member[1] }}
+                    </td>
+                    <td class="whitespace-nowrap px-4 py-2 text-gray-700">{{ member[0] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="events" class="tab-content hidden">
+
+
+    <div class="overflow-x-auto rounded-lg border border-gray-200 px-60">
+        <table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+            <thead class="text-center">
+                <tr>
+                    <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                        Event Name
+                    </th>
+                    <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                        Start Time
+                    </th>
+                    <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                        End Time
+                    </th>
+                    <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                        Venue
+                    </th>
+                    <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                        Approval Status
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y divide-gray-200 text-center">
+                {% for event in club_events %}
+                <tr>
+                    <td class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                        {{ event[0] }}
+                    </td>
+                    <td class="whitespace-nowrap px-4 py-2 text-gray-700">{{ event[1] }}</td>
+                    <td class="whitespace-nowrap px-4 py-2 text-gray-700">{{ event[2] }}</td>
+                    <td class="whitespace-nowrap px-4 py-2 text-gray-700">{{ event[3] }}</td>
+                    <td class="whitespace-nowrap px-4 py-2 text-gray-700">{{ event[4] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+
+
+<div id="add" class="tab-content hidden">
+    <!-- Add member/event form here -->
+    <button id="showAddMemberFormButton"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-blue active:bg-blue-800">
+        Add Member
+    </button>
+    <button id="showAddEventFormButton"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2 focus:outline-none focus:shadow-outline-blue active:bg-blue-800">
+        Add Event
+    </button>
+
+    <div id="addMemberForm" style="display: none;">
+        <form action="{{ url_for('add_member') }}" method="post">
+            <!-- Form fields and labels -->
+            <label for="roll_no">Roll No:</label>
+            <input type="text" id="roll_no" name="roll_no" required>
+
+            <label for="position">Position:</label>
+            <select id="position" name="position" required>
+                <option value="Secretary">Secretary</option>
+                <option value="Associate Secretary">Associate Secretary</option>
+                <option value="Treasurer">Treasurer</option>
+                <option value="FC">FC</option>
+                <option value="Member">Member</option>
+                <option value="Advisor">Advisor</option>
+            </select>
+            <button type="submit"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-blue active:bg-blue-800">
+                Add Member
+            </button>
+        </form>
+    </div>
+
+    <div id="addEventForm" style="display: none;">
+        <form action="{{ url_for('add_event') }}" method="post">
+            <!-- Form fields and labels -->
+            <label for="event_name">Event Name:</label>
+            <input type="text" id="event_name" name="event_name" required>
+
+            <label for="start_date">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" required>
+
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date" required>
+
+            <label for="venue">Venue:</label>
+            <input type="text" id="venue" name="venue" required>
+
+            <label for="logistics">Logistics:</label>
+            <input type="text" id="logistics" name="logistics" required>
+            <button type="submit"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-blue active:bg-blue-800">
+                Add Event
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    var buttons = document.querySelectorAll('button[data-target]');
+    var contents = document.querySelectorAll('.tab-content');
+
+    buttons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            var target = this.dataset.target;
+
+            contents.forEach(function (content) {
+                if (content.id === target) {
+                    content.classList.remove('hidden');
+                } else {
+                    content.classList.add('hidden');
+                }
+            });
+        });
+    });
+
+
+
+    // button show hide code
+    var addEventFormButton = document.getElementById('showAddEventFormButton');
+    var addMemberFormButton = document.getElementById('showAddMemberFormButton');
+    var addEventForm = document.getElementById('addEventForm');
+    var addMemberForm = document.getElementById('addMemberForm');
+
+    addEventFormButton.addEventListener('click', function () {
+        addMemberForm.style.display = 'none'; // Hide the Add Member form
+        var form = addEventForm;
+        if (form.style.display === 'none') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    });
+
+    addMemberFormButton.addEventListener('click', function () {
+        addEventForm.style.display = 'none'; // Hide the Add Event form
+        var form = addMemberForm;
+        if (form.style.display === 'none') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}
