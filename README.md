@@ -12,7 +12,7 @@ This is a Flask-based web application for managing club events in a college. The
 ## Installation
 1. Clone the repository:
     ```
-    git clone https://github.com/your-repo/project.git
+    git clone https://github.com/sm408/cct
     ```
 2. Navigate to the project directory:
     ```
