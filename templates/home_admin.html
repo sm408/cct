@@ -9,91 +9,166 @@
     <h1 class="text-4xl font-bold mb-4">DoSA - Admin</h1>
     <h5 class="text-xs mb-4">Dean of Student Affairs</h5>
 
-    <div class="flex mb-4">
-        <button class="tab-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            data-target="allevents">All Events</button>
-        <button class="tab-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2"
-            data-target="eventapprovals">Events Approvals</button>
+    <div class="hidden sm:block">
+        <div class="border-b border-gray-200">
+            <nav class="-mb-px flex gap-6" aria-label="Tabs">
+                <button data-target="allevents" class="tab-button shrink-0 border-b-2 border-transparent px-1 pb-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 focus:outline-none focus:border-sky-500 focus:text-sky-600">
+                    All Events
+                </button>
+
+                <button data-target="eventapprovals" class="tab-button shrink-0 border-b-2 border-transparent px-1 pb-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 focus:outline-none focus:border-sky-500 focus:text-sky-600">
+                    Events Approvals
+                </button>
+            </nav>
+        </div>
     </div>
 
-    <div id="allevents" class="tab-content hidden">
-        <table>
-            <thead>
-                <tr>
-                    <th>Event ID</th>
-                    <th>Event Name</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Venue</th>
-                    <th>Logistics</th>
-                    <th>Approval Status</th>
-                    <th>Club ID</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for evdetails in event_details %}
-                <tr>
-                    <td>{{ evdetails[0] }}</td>
-                    <td>{{ evdetails[1] }}</td>
-                    <td>{{ evdetails[2] }}</td>
-                    <td>{{ evdetails[3] }}</td>
-                    <td>{{ evdetails[4] }}</td>
-                    <td>{{ evdetails[5] }}</td>
-                    <td>{{ evdetails[6] }}</td>
-                    <td>{{ evdetails[7] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div id="allevents" class="tab-content">
+        <div class="overflow-x-auto rounded-lg border border-gray-200 px-72">
+            <table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+                <thead class="text-center">
+                    <tr>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Event ID
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Event Name
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Start Date
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            End Date
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Venue
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Logistics
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Approval Status
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Club ID
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 text-center">
+                    {% for evdetails in event_details %}
+                    <tr>
+                        <td class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            {{ evdetails[0] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evdetails[1] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evdetails[2] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evdetails[3] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evdetails[4] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evdetails[5] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evdetails[6] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evdetails[7] }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
-
-    <div id="eventapprovals" class="tab-content">
-        <table>
-            <thead>
-                <tr>
-                    <th>Event ID</th>
-                    <th>Event Name</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Venue</th>
-                    <th>Logistics</th>
-                    <th>Club ID</th>
-                    <th>Approval Status</th>
-                    <th>Approve</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for evpending in event_pending %}
-                <tr>
-                    <td>{{ evpending[0] }}</td>
-                    <td>{{ evpending[1] }}</td>
-                    <td>{{ evpending[2] }}</td>
-                    <td>{{ evpending[3] }}</td>
-                    <td>{{ evpending[4] }}</td>
-                    <td>{{ evpending[5] }}</td>
-                    <td>{{ evpending[7] }}</td>
-                    <td>{{ evpending[6] }}</td>
-                    <td>
-                        <form action="/approve_event" method="post">
-                            <input type="hidden" name="eventId" value="{{ evpending[0] }}">
-                            <input type="hidden" name="isApproved" value="1">
-                            <input type="submit" value="Approve"
-                                style="text-decoration: underline; color: green; cursor: pointer;">
-                        </form>
-                        <form action="/approve_event" method="post" style="margin-left: 10px;">
-                            <input type="hidden" name="eventId" value="{{ evpending[0] }}">
-                            <input type="hidden" name="isApproved" value="0">
-                            <input type="submit" value="Reject"
-                                style="text-decoration: underline; color: red; cursor: pointer;">
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div id="eventapprovals" class="tab-content hidden">
+        <div class="overflow-x-auto rounded-lg border border-gray-200 px-72">
+            <table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+                <thead class="text-center">
+                    <tr>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Event ID
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Event Name
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Start Date
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            End Date
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Venue
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Logistics
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Club ID
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Approval Status
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Approve
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 text-center">
+                    {% for evpending in event_pending %}
+                    <tr>
+                        <td class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            {{ evpending[0] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evpending[1] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evpending[2] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evpending[3] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evpending[4] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evpending[5] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evpending[7] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evpending[6] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            <form action="/approve_event" method="post">
+                                <input type="hidden" name="eventId" value="{{ evpending[0] }}">
+                                <input type="hidden" name="isApproved" value="1">
+                                <input type="submit" value="Approve"
+                                    style="text-decoration: underline; color: green; cursor: pointer;">
+                            </form>
+                            <form action="/approve_event" method="post" style="margin-left: 10px;">
+                                <input type="hidden" name="eventId" value="{{ evpending[0] }}">
+                                <input type="hidden" name="isApproved" value="0">
+                                <input type="submit" value="Reject"
+                                    style="text-decoration: underline; color: red; cursor: pointer;">
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-
 
 
 

@@ -1,15 +1,16 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_mysqldb import MySQL
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+import pass_secret
 
 app = Flask(__name__)
 app.secret_key = '9158'  # Change this to a random secret
 
 # MySQL Configuration
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'root'
-app.config['MYSQL_DB'] = 'cct'
+app.config['MYSQL_HOST'] = pass_secret.MYSQL_HOST
+app.config['MYSQL_USER'] = pass_secret.MYSQL_USER
+app.config['MYSQL_PASSWORD'] = pass_secret.MYSQL_PASSWORD
+app.config['MYSQL_DB'] = pass_secret.MYSQL_DB
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 # Initialize MySQL
@@ -70,11 +71,10 @@ def login():
         else:
             flash('Login failed. Please check your username and password.', 'danger')
 
-    return render_template('login.html')
+    return render_template('login.html', is_login_page=True)
 
 
-@app.route('/logout')
-@login_required
+@app.route('/logout', methods=['POST'])
 def logout():
     logout_user()
     flash('Logout successful!', 'success')
@@ -136,8 +136,8 @@ def club_dashboard():
 
     # use for club details
     # cursor.callproc('DisplayClubDetails', [current_user.id, False, False])
-    cursor.execute('SELECT * FROM clubs WHERE Club_ID = %s', (current_user.username))
-    club_details = cursor.fetchall()
+    # cursor.execute('SELECT * FROM clubs WHERE Club_ID = %s', (current_user.username))
+    # club_details = cursor.fetchall()
 
     cursor.execute('CALL DisplayClubDetails(%s, %s, %s)', (current_user.id, True, False))
     club_members = cursor.fetchall()
@@ -147,7 +147,9 @@ def club_dashboard():
     club_events = cursor.fetchall()
     print(club_events)
 
-    return render_template('home_club.html', club_details=club_details, club_members=club_members, club_events=club_events)
+    # return render_template('home_club.html', club_details=club_details, club_members=club_members, club_events=club_events)
+    return render_template('home_club.html', club_members=club_members, club_events=club_events)
+
 
 
 @app.route('/add_event', methods=['POST'])
@@ -185,15 +187,107 @@ def add_member():
 @app.route('/cc_dashboard')
 @login_required
 def cc_dashboard():
-    return f"Welcome to the CC dashboard, {current_user.username}!"
+    # Get student details
+    cursor = mysql.connection.cursor()
+
+    cursor.callproc('GetPendingTimesheetsForApproval')
+    pending_timesheets = cursor.fetchall()
+    
+
+    # use for all eventdetails
+    cursor.execute('CALL GetAllEventsForAdmin()')
+    event_details = cursor.fetchall()
+
+    return render_template('home_cc.html', pending_timesheets=pending_timesheets, event_details=event_details)
+
+@app.route('/approvetimesheet', methods=['GET'])
+@login_required
+def approvetimesheet():
+    # print(request.args.get('student_id'))
+    roll_number = request.args.get('student_id')
+    # print(request.args.get('event_id'))
+    event_id = request.args.get('event_id')
+    is_approved = int(request.args.get('approved') == 'true')
+    # print(is_approved)
+
+    cursor = mysql.connection.cursor()
+    print(roll_number, event_id, is_approved)
+    cursor.execute('SELECT ApproveTimesheet(%s, %s, %s)', (roll_number, event_id, is_approved))
+    result = cursor.fetchone()
+    mysql.connection.commit()
+    
+
+    if result:
+        flash(result[0], 'success')
+    else:
+        flash('Error in approving timesheet', 'danger')
+
+    return redirect(url_for('cc_dashboard'))
 
 
 # Student routes ******************************************************************************************************
 @app.route('/student_dashboard')
 @login_required
 def student_dashboard():
-    return render_template('home_student.html')
 
+    # Get student details
+    cursor = mysql.connection.cursor()
+
+    cursor.execute('CALL GetClubsByStudent(%s)', (current_user.id,))
+    student_clubs = cursor.fetchall()
+    # print(student_clubs)
+
+    eventbyclubsofstudents = []
+    for club in student_clubs:
+        cursor.execute('CALL GetEventsByClubName(%s)', (club[0],))  # Adjust the index based on your data structure
+        events = cursor.fetchall()
+        eventbyclubsofstudents.append(events)
+    
+    # print(eventbyclubsofstudents)
+
+    cursor.execute('CALL GetEventsWithTimesheetsByStudent(%s)', (current_user.id,))
+    alltimesheets = cursor.fetchall()
+
+    return render_template('home_student.html', student_clubs=student_clubs, alltimesheets=alltimesheets, eventbyclubsofstudents=eventbyclubsofstudents)
+
+
+@app.route('/add_timesheet', methods=['POST'])
+@login_required
+def add_timesheet():
+    event_id = request.form['eventId']
+    print(event_id)
+    print(request.form['eventId'])
+    if not event_id.isdigit():
+        flash('Invalid event ID!', 'error')
+        return redirect(url_for('student_dashboard'))
+
+    event_id = int(event_id)
+    skills = request.form['skills']
+    description = request.form['description']
+    hours = request.form['hours']
+
+    cursor = mysql.connection.cursor()
+    cursor.callproc('AddTimesheet', (current_user.id, event_id, description, skills, hours))
+    mysql.connection.commit()
+
+    flash('Timesheet added successfully!', 'success')
+    return redirect(url_for('student_dashboard'))
+
+@app.route('/delete_timesheet', methods=['POST'])
+@login_required
+def delete_timesheet():
+    eventID = request.form['event_id']
+
+    cursor = mysql.connection.cursor()
+    cursor.callproc('DeleteTimesheet', (current_user.id, eventID))
+    mysql.connection.commit()
+
+    flash('Timesheet deleted successfully!', 'danger')
+    return redirect(url_for('student_dashboard'))
+
+
+
+#**Main Function ******************************************************************************************************
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

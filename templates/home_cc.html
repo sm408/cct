@@ -5,5 +5,153 @@
 {% block heading %}{% endblock %}
 
 {% block content %}
-<h1>hello cc</h1>>
-    {% endblock %}
+<div class="container mx-auto px-4">
+
+    <div class="hidden sm:block">
+        <div class="border-b border-gray-200">
+            <nav class="-mb-px flex gap-6" aria-label="Tabs">
+                <button data-target="timesheetapprovals"
+                    class="tab-button shrink-0 border-b-2 border-transparent px-1 pb-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 focus:outline-none focus:border-sky-500 focus:text-sky-600">
+                    Timesheet Approvals
+                </button>
+
+                <button data-target="allevents"
+                    class="tab-button shrink-0 border-b-2 border-transparent px-1 pb-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 focus:outline-none focus:border-sky-500 focus:text-sky-600">
+                    All Events
+                </button>
+            </nav>
+        </div>
+    </div>
+
+
+    <div id="timesheetapprovals" class="tab-content">
+        <div class="overflow-x-auto rounded-lg border border-gray-200 px-72">
+            <table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+                <thead class="text-center">
+                    <tr>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Student ID</th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Student Name</th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Event ID</th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Event Name</th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Description</th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Skills</th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Hours</th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Approval Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 text-center">
+                    {% for timesheet in pending_timesheets %}
+                    <tr>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">{{ timesheet[0] }}</td>
+                        <td class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">{{ timesheet[1] }}</td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">{{ timesheet[2] }}</td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">{{ timesheet[3] }}</td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">{{ timesheet[4] }}</td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">{{ timesheet[5] }}</td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">{{ timesheet[6] }}</td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {% if timesheet[5] == "approved" or timesheet[5] == "rejected" %}
+                            <span style="color: blue;">{{ timesheet[5] }}</span>
+                            {% else %}
+                            <a href="/approvetimesheet?student_id={{ timesheet[0] }}&event_id={{ timesheet[2] }}&approved=true" class="btn" style="color: green; display: inline-block;">Approve</a>
+                            <p style="display: inline-block;">/</p>
+                            <a href="/approvetimesheet?student_id={{ timesheet[0] }}&event_id={{ timesheet[2] }}&approved=false" class="btn" style="color: red; display: inline-block;">Reject</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="allevents" class="tab-content hidden">
+        <div class="overflow-x-auto rounded-lg border border-gray-200 px-72">
+            <table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+                <thead class="text-center">
+                    <tr>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Event ID
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Event Name
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Start Date
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            End Date
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Venue
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Logistics
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Approval Status
+                        </th>
+                        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            Club ID
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 text-center">
+                    {% for evdetails in event_details %}
+                    <tr>
+                        <td class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                            {{ evdetails[0] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evdetails[1] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evdetails[2] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evdetails[3] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evdetails[4] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evdetails[5] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evdetails[6] }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
+                            {{ evdetails[7] }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+
+</div>
+
+<script>
+    var buttons = document.querySelectorAll('.tab-button');
+    var contents = document.querySelectorAll('.tab-content');
+
+    buttons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            var target = this.dataset.target;
+
+            contents.forEach(function (content) {
+                if (content.id === target) {
+                    content.classList.remove('hidden');
+                } else {
+                    content.classList.add('hidden');
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}
