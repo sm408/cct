@@ -34,3 +34,11 @@ The application will be accessible at `http://localhost:5000`.
 ## Usage
 
 After running the application, navigate to `http://localhost:5000` in your web browser. You can log in with different user roles to see their respective dashboards and capabilities.
+
+## Acknowledgements
+
+This project was built using the following resources:
+
+- [Flask Documentation](https://flask.palletsprojects.com/)
+- [Tailwind Documentation](https://tailwindcss.com/docs)
+- Design ideas inspired by [HyperUI](https://www.hyperui.dev/components/application-ui/)
